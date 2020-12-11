@@ -82,6 +82,28 @@ On the tsconfig.json side, things remain the same as before.
 
 **Entries in the imports field must always start with `#`** to ensure they are disambiguated from package specifiers. So no more `@`.
 
+### Use `index` file when importing folders
+Since Node.js' `subpath imports` just add `.js` extension to the path you provide, you need to use the `index` file when importing a folder.
+That's it, 
+```ts
+import * as config from "#subpath/module/index";
+```
+
+instead of
+```ts
+import * as config from "#subpath/module";
+```
+
+In fact, the latest one will be resloved as 
+```js
+`const module = require("./dist/module.js")`
+```
+instead of 
+```js
+`const module = require("./dist/module/index.js")`
+```
+and Node.js will not find the file to import at runtime.
+
 ### No JSON files import
 
 Today, importing .json files in TypeScript using the flag `resolveJsonModule` isn't supported since Node.js matches files without extension. So writing
